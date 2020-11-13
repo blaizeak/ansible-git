@@ -1,0 +1,49 @@
+---
+- name: "Ansible-Git"
+  hosts: all
+  become: true
+  vars:
+    - git-url: "https://github.com/devopsclasss2020/ansible2-git2.git"
+    - git-dir: "/tmp/git"
+  
+  tasks:
+    - name: "Installing Apache"
+      yum:
+        name:
+          - httpd
+          - php
+          - php-mysql
+        state: present
+      
+      services:
+        name: httpd
+        state: restarted
+        enabled: true
+
+    - name: "Creating Git Folder"
+      file:
+        path: "{{ git-dir }}"
+        state: directory
+        
+      
+    - name: "Clone Git"
+      git:
+        src: "{{ git-url }}"
+        dest: "{{ git-dir}}"
+     
+    - name: "Copying Contents"
+      copy:
+        src:  "{{ git-dir }}"/
+        dest: /var/www/html
+        remote_src: true
+
+    - name "cleaning up"
+      file:
+        path: "{{ git-dir }}"
+        state: absent
+
+
+
+            
+       
+   
